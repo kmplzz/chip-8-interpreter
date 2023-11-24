@@ -1,7 +1,7 @@
 #include "src/Chip8.h"
 #include "src/Renderer.h"
 
-constexpr int SCREEN_SCALE = 10;
+constexpr int SCREEN_SCALE = 20;
 
 int main() {
     Chip8 chip8;
@@ -10,4 +10,5 @@ int main() {
         chip8.cycle();
         renderer.update();
     }
+
 }

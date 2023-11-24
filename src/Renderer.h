@@ -5,7 +5,7 @@
 #include "Chip8.h"
 
 class Renderer {
-    uint8_t (&m_video)[Chip8::SCREEN_WIDTH * Chip8::SCREEN_HEIGHT];
+    uint8_t (&m_video)[Chip8::SCREEN_WIDTH][Chip8::SCREEN_HEIGHT];
     uint8_t (&m_keyboard)[Chip8::KEYS_COUNT];
 
     sf::RenderWindow* m_window;
@@ -14,7 +14,7 @@ class Renderer {
     sf::Event m_event{};
 
 public:
-    Renderer(uint8_t (&video)[Chip8::SCREEN_WIDTH * Chip8::SCREEN_HEIGHT],
+    Renderer(uint8_t (&video)[Chip8::SCREEN_WIDTH][Chip8::SCREEN_HEIGHT],
         uint8_t (&keyboard)[Chip8::KEYS_COUNT], int scale);
     ~Renderer();
 

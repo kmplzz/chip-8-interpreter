@@ -2,7 +2,7 @@
 
 const std::string WINDOW_TITLE = "CHIP-8 interpreter";
 
-Renderer::Renderer(uint8_t (&video)[Chip8::SCREEN_WIDTH * Chip8::SCREEN_HEIGHT],
+Renderer::Renderer(uint8_t (&video)[Chip8::SCREEN_WIDTH][Chip8::SCREEN_HEIGHT],
                    uint8_t (&keyboard)[Chip8::KEYS_COUNT],
                    const int scale) : m_video(video), m_keyboard(keyboard) {
 
@@ -38,16 +38,18 @@ void Renderer::update() const {
     m_window->clear();
 
     std::vector<sf::Vertex> pixels;
-    for (int i = 0; i < Chip8::SCREEN_WIDTH * Chip8::SCREEN_HEIGHT; i++) {
-        const int pixel = m_video[i];
+    for (int i = 0; i < Chip8::SCREEN_WIDTH; i++) {
+        for (int j = 0; j < Chip8::SCREEN_HEIGHT; j++) {
+            const int pixel = m_video[i][j];
 
-        const auto x = static_cast<float>(i % Chip8::SCREEN_WIDTH);
-        const auto y = static_cast<float>(i / Chip8::SCREEN_HEIGHT + 1);
-        sf::Vector2f coords(x, y);
+            const auto x = static_cast<float>(i);
+            const auto y = Chip8::SCREEN_HEIGHT - static_cast<float>(j);
+            sf::Vector2f coords(x, y);
 
-        sf::Color color = pixel == 0 ? sf::Color::Black : sf::Color::Green;
+            sf::Color color = pixel == 0 ? sf::Color::Black : sf::Color::Green;
 
-        pixels.emplace_back(coords, color);
+            pixels.emplace_back(coords, color);
+        }
     }
 
     m_texture->draw(pixels.data(), Chip8::SCREEN_WIDTH * Chip8::SCREEN_HEIGHT, sf::Points);

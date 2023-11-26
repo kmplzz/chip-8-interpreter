@@ -3,7 +3,7 @@
 #include <random>
 
 class Chip8 {
-    uint8_t stack[64]{};
+    uint16_t stack[16]{};
     uint8_t sp{};
     uint16_t pc{};
     uint16_t opcode{};
@@ -13,6 +13,13 @@ class Chip8 {
     uint8_t soundTimer{};
     uint8_t ram[4096]{};
 
+    typedef void (Chip8::*Ops)();
+    Ops ops[0xF + 1];
+    Ops ops0[0xF + 1];
+    Ops ops8[0xF + 1];
+    Ops opsE[0xF + 1];
+    Ops opsF[0x66];
+
     std::mt19937 randomGen;
     std::uniform_int_distribution<> randomDistribution;
 public:
@@ -20,15 +27,16 @@ public:
     static constexpr int SCREEN_HEIGHT = 32;
     static constexpr int KEYS_COUNT = 16;
 
-    uint8_t video[SCREEN_WIDTH][SCREEN_HEIGHT]{};
+    uint8_t framebuffer[SCREEN_WIDTH][SCREEN_HEIGHT]{};
     uint8_t keyboard[KEYS_COUNT]{};
 
     Chip8();
 
     void cycle();
+    void loadRom(const std::string &path);
     uint8_t random();
 
-    void op0nnn(); void op00E0(); void op00EE();
+    void op00E0(); void op00EE();
 
     void op1nnn(); void op5xy0(); void opAnnn();
     void op2nnn(); void op6xkk(); void opBnnn();
@@ -46,5 +54,5 @@ public:
     void opFx0A(); void opFx1E(); void opFx55();
     void opFx15(); void opFx29(); void opFx65();
 
-    static void opNOP() {};
+    void opNOP();
 };

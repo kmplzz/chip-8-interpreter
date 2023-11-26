@@ -1,40 +1,35 @@
 #pragma once
-#include <cstdint>
+#include <array>
 #include <random>
 
+using namespace std;
+
 class Chip8 {
-    uint16_t stack[16]{};
-    uint8_t sp{};
-    uint16_t pc{};
+
+    static constexpr int RAM_SIZE = 4096;
+    static constexpr int STACK_SIZE = 8;
+    static constexpr int REGISTERS_COUNT = 16;
+
+    array<uint8_t, RAM_SIZE> ram{};
+
+    uint16_t pc;
     uint16_t opcode{};
-    uint8_t registers[16]{};
+
+    uint8_t sp{};
+    array<uint16_t, STACK_SIZE> stack{};
+
     uint16_t index{};
+    std::array<uint8_t, REGISTERS_COUNT> registers{};
+
     uint8_t delayTimer{};
     uint8_t soundTimer{};
-    uint8_t ram[4096]{};
 
     typedef void (Chip8::*Ops)();
-    Ops ops[0xF + 1];
-    Ops ops0[0xF + 1];
-    Ops ops8[0xF + 1];
-    Ops opsE[0xF + 1];
-    Ops opsF[0x66];
-
-    std::mt19937 randomGen;
-    std::uniform_int_distribution<> randomDistribution;
-public:
-    static constexpr int SCREEN_WIDTH = 64;
-    static constexpr int SCREEN_HEIGHT = 32;
-    static constexpr int KEYS_COUNT = 16;
-
-    uint8_t framebuffer[SCREEN_WIDTH][SCREEN_HEIGHT]{};
-    uint8_t keyboard[KEYS_COUNT]{};
-
-    Chip8();
-
-    void cycle();
-    void loadRom(const std::string &path);
-    uint8_t random();
+    array<Ops, 0xF + 1> ops{};
+    array<Ops, 0xF + 1> ops0{};
+    array<Ops, 0xF + 1> ops8{};
+    array<Ops, 0xF + 1> opsE{};
+    array<Ops, 0x65 + 1> opsF{};
 
     void op00E0(); void op00EE();
 
@@ -55,4 +50,24 @@ public:
     void opFx15(); void opFx29(); void opFx65();
 
     void opNOP();
+
+    [[nodiscard]] uint8_t getVx() const;
+    [[nodiscard]] uint8_t getVy() const;
+
+    mt19937 randomGen;
+    uniform_int_distribution<> randomDistribution;
+    uint8_t random();
+public:
+    static constexpr int SCREEN_WIDTH = 64;
+    static constexpr int SCREEN_HEIGHT = 32;
+    static constexpr int KEYS_COUNT = 16;
+
+    std::array<std::array<uint8_t, SCREEN_HEIGHT>, SCREEN_WIDTH> framebuffer{};
+    std::array<uint8_t, KEYS_COUNT> keyboard{};
+
+    Chip8();
+
+    void load(const string &filename);
+
+    void cycle();
 };
